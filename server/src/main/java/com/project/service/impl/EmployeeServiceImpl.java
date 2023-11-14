@@ -1,7 +1,10 @@
 package com.project.service.impl;
 
 import com.project.constant.MessageConstant;
+import com.project.constant.PasswordConstant;
 import com.project.constant.StatusConstant;
+import com.project.context.BaseContext;
+import com.project.dto.EmployeeDTO;
 import com.project.dto.EmployeeLoginDTO;
 import com.project.entity.Employee;
 import com.project.exception.AccountLockedException;
@@ -9,9 +12,12 @@ import com.project.exception.AccountNotFoundException;
 import com.project.exception.PasswordErrorException;
 import com.project.mapper.EmployeeMapper;
 import com.project.service.EmployeeService;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.DigestUtils;
+
+import java.time.LocalDateTime;
 
 @Service
 public class EmployeeServiceImpl implements EmployeeService {
@@ -39,8 +45,7 @@ public class EmployeeServiceImpl implements EmployeeService {
             throw new AccountNotFoundException(MessageConstant.ACCOUNT_NOT_FOUND);
         }
 
-        //密码比对
-        // TODO 后期需要进行md5加密，然后再进行比对
+        //3、对密码进行加密
         password = DigestUtils.md5DigestAsHex(password.getBytes());
 
         if (!password.equals(employee.getPassword())) {
@@ -52,8 +57,29 @@ public class EmployeeServiceImpl implements EmployeeService {
             throw new AccountLockedException(MessageConstant.ACCOUNT_LOCKED);
         }
 
-        //3、返回实体对象
+        //4、返回登录成功的员工对象
         return employee;
+    }
+
+    @Override
+    public void addEmployee(EmployeeDTO employeeDTO) {
+        Employee employee = new Employee();
+        //将dto中的数据拷贝到实体对象中
+        BeanUtils.copyProperties(employeeDTO, employee);
+        //设置状态默认值
+        employee.setStatus(StatusConstant.ENABLE);
+        //设置默认密码
+        employee.setPassword(DigestUtils.md5DigestAsHex(PasswordConstant.DEFAULT_PASSWORD.getBytes()));
+        //设置创建时间
+        employee.setCreateTime(LocalDateTime.now());
+        //设置更新时间
+        employee.setUpdateTime(LocalDateTime.now());
+        //设置创建人和更新人
+        employee.setCreateUser(BaseContext.getCurrentId());
+        employee.setUpdateUser(BaseContext.getCurrentId());
+        //执行添加
+        employeeMapper.addEmployee(employee);
+
     }
 
 }

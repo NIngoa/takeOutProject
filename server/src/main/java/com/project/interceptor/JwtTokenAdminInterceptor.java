@@ -1,6 +1,7 @@
 package com.project.interceptor;
 
 import com.project.constant.JwtClaimsConstant;
+import com.project.context.BaseContext;
 import com.project.properties.JwtProperties;
 import com.project.utils.JwtUtil;
 import io.jsonwebtoken.Claims;
@@ -46,7 +47,8 @@ public class JwtTokenAdminInterceptor implements HandlerInterceptor {
             log.info("jwt校验:{}", token);
             Claims claims = JwtUtil.parseJWT(jwtProperties.getAdminSecretKey(), token);
             Long empId = Long.valueOf(claims.get(JwtClaimsConstant.EMP_ID).toString());
-            log.info("当前员工id：", empId);
+            log.info("当前员工id：{}", empId);
+            BaseContext.setCurrentId(empId);
             //3、通过，放行
             return true;
         } catch (Exception ex) {

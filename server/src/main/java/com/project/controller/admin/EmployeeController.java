@@ -1,6 +1,7 @@
 package com.project.controller.admin;
 
 import com.project.constant.JwtClaimsConstant;
+import com.project.dto.EmployeeDTO;
 import com.project.dto.EmployeeLoginDTO;
 import com.project.entity.Employee;
 import com.project.properties.JwtProperties;
@@ -76,4 +77,16 @@ public class EmployeeController {
         return Result.success();
     }
 
+    /**
+     * 新增员工
+     * @param employeeDTO
+     * @return
+     */
+    @PostMapping
+    @ApiOperation(value = "新增员工")
+    public Result addEmployee(@RequestBody EmployeeDTO employeeDTO){
+        log.info("新增员工信息:{}",employeeDTO);
+        employeeService.addEmployee(employeeDTO);
+        return Result.success();
+    }
 }

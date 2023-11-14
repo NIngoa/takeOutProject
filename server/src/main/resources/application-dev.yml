@@ -1,8 +1,13 @@
 sky:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
+    # 数据库地址
     host: localhost
+    # 数据库端口
     port: 3306
-    database: sky_take_out
+    # 数据库名称
+    database: take_out_project
+    # 数据库用户名
     username: root
+    # 数据库密码
     password: 1234
