@@ -1,23 +1,30 @@
 package com.project.service.impl;
 
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
 import com.project.constant.MessageConstant;
 import com.project.constant.PasswordConstant;
 import com.project.constant.StatusConstant;
 import com.project.context.BaseContext;
 import com.project.dto.EmployeeDTO;
 import com.project.dto.EmployeeLoginDTO;
+import com.project.dto.EmployeePageQueryDTO;
 import com.project.entity.Employee;
 import com.project.exception.AccountLockedException;
 import com.project.exception.AccountNotFoundException;
 import com.project.exception.PasswordErrorException;
 import com.project.mapper.EmployeeMapper;
+import com.project.result.PageResult;
 import com.project.service.EmployeeService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.DigestUtils;
 
+import java.beans.Beans;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 public class EmployeeServiceImpl implements EmployeeService {
@@ -81,5 +88,44 @@ public class EmployeeServiceImpl implements EmployeeService {
         employeeMapper.addEmployee(employee);
 
     }
+
+    @Override
+    public PageResult selectByPage(EmployeePageQueryDTO employeePageQueryDTO) {
+        //1、使用pageHelper分页插件
+        PageHelper.startPage(employeePageQueryDTO.getPage(), employeePageQueryDTO.getPageSize());
+        //2、执行查询
+        Page<Employee> page = employeeMapper.selectByPage(employeePageQueryDTO);
+        //3、封装返回值
+        long total = page.getTotal();
+        List<Employee> result = page.getResult();
+        return new PageResult(total, result);
+    }
+
+    @Override
+    public void updateStatus(Integer status, Long id) {
+        Employee employee = Employee.builder()
+                .status(status)
+                .id(id)
+                .updateTime(LocalDateTime.now())
+                .updateUser(BaseContext.getCurrentId())
+                .build();
+        employeeMapper.update(employee);
+    }
+
+    @Override
+    public Employee getById(Long id) {
+        Employee employee=employeeMapper.selectById(id);
+        return employee;
+    }
+
+    @Override
+    public void updateEmployee(EmployeeDTO employeeDTO) {
+        Employee employee=new Employee();
+        BeanUtils.copyProperties(employeeDTO,employee);
+        employee.setUpdateTime(LocalDateTime.now());
+        employee.setUpdateUser(BaseContext.getCurrentId());
+        employeeMapper.update(employee);
+    }
+
 
 }
