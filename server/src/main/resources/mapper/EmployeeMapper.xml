@@ -44,8 +44,6 @@
                 update_user=#{updateUser}
             </if>
         </set>
-        <where>
-            id=#{id}
-        </where>
+        where id=#{id}
     </update>
 </mapper>

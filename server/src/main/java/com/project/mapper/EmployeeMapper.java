@@ -29,13 +29,26 @@ public interface EmployeeMapper {
     void addEmployee(Employee employee);
 
     /**
-     *员工分页查询
+     * 员工分页查询
+     *
      * @param employeePageQueryDTO
      * @return
      */
     Page<Employee> selectByPage(EmployeePageQueryDTO employeePageQueryDTO);
 
+    /**
+     * 修改员工
+     *
+     * @param employee
+     */
     void update(Employee employee);
-@Select("select * from employee where id=#{id}")
+
+    /**
+     * 根据id查询员工
+     *
+     * @param id
+     * @return
+     */
+    @Select("select * from employee where id=#{id}")
     Employee selectById(Long id);
 }
