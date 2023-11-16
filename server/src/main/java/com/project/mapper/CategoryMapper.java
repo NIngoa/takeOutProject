@@ -1,8 +1,10 @@
 package com.project.mapper;
 
 import com.github.pagehelper.Page;
+import com.project.annotation.AutoFill;
 import com.project.dto.CategoryPageQueryDTO;
 import com.project.entity.Category;
+import com.project.enumeration.OperationType;
 import org.apache.ibatis.annotations.Mapper;
 
 @Mapper
@@ -20,6 +22,7 @@ public interface CategoryMapper {
      *
      * @param category
      */
+    @AutoFill(value = OperationType.UPDATE)
     void update(Category category);
 
     /**
@@ -27,6 +30,7 @@ public interface CategoryMapper {
      *
      * @param category
      */
+    @AutoFill(value = OperationType.INSERT)
     void addCategory(Category category);
 
     void deleteById(Long id);
