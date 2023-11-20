@@ -1,11 +1,16 @@
 package com.project.service.impl;
 
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
 import com.project.dto.DishDTO;
+import com.project.dto.DishPageQueryDTO;
 import com.project.entity.Dish;
 import com.project.entity.DishFlavor;
 import com.project.mapper.DishFlavorMapper;
 import com.project.mapper.DishMapper;
+import com.project.result.PageResult;
 import com.project.service.DishService;
+import com.project.vo.DishVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,5 +50,26 @@ public class DishServiceImpl implements DishService {
             flavors.forEach(dishFlavor -> dishFlavor.setDishId(id));
             dishFlavorMapper.insertBatch(flavors);
         }
+    }
+
+    /**
+     * 分页查询菜品
+     *
+     * @param dishPageQueryDTO
+     * @return
+     */
+    @Override
+    public PageResult queryDishByPage(DishPageQueryDTO dishPageQueryDTO) {
+        //分页参数
+        int pageNum = dishPageQueryDTO.getPage();
+        int pageSize = dishPageQueryDTO.getPageSize();
+        //分页查询
+        PageHelper.startPage(pageNum, pageSize);
+        Page<DishVO> page = dishMapper.queryDishByPage(dishPageQueryDTO);
+        //封装返回值
+        long total = page.getTotal();
+        List<DishVO> result = page.getResult();
+
+        return new PageResult(total,result);
     }
 }
