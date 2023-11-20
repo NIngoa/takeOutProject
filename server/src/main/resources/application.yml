@@ -8,10 +8,10 @@ spring:
     allow-circular-references: true
   datasource:
     druid:
-      driver-class-name: ${sky.datasource.driver-class-name}
-      url: jdbc:mysql://${sky.datasource.host}:${sky.datasource.port}/${sky.datasource.database}?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&useSSL=false&allowPublicKeyRetrieval=true
-      username: ${sky.datasource.username}
-      password: ${sky.datasource.password}
+      driver-class-name: ${project.datasource.driver-class-name}
+      url: jdbc:mysql://${project.datasource.host}:${project.datasource.port}/${project.datasource.database}?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&useSSL=false&allowPublicKeyRetrieval=true
+      username: ${project.datasource.username}
+      password: ${project.datasource.password}
 
 mybatis:
   #mapper配置文件
@@ -29,11 +29,17 @@ logging:
         service: info
         controller: info
 
-sky:
+project:
   jwt:
     # 设置jwt签名加密时使用的秘钥
     admin-secret-key: itcast
     # 设置jwt过期时间
-    admin-ttl: 72000000
+    admin-ttl: 720000000
     # 设置前端传递过来的令牌名称
     admin-token-name: token
+  alioss:
+    endpoint: ${project.alioss.endpoint}}
+    access-key-id: ${project.alioss.access-key-id}
+    access-key-secret: ${project.alioss.access-key-secret}
+    bucket-name: ${project.alioss.bucket-name}
+

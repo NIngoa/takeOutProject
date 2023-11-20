@@ -7,6 +7,8 @@ import com.project.entity.Category;
 import com.project.enumeration.OperationType;
 import org.apache.ibatis.annotations.Mapper;
 
+import java.util.List;
+
 @Mapper
 public interface CategoryMapper {
     /**
@@ -34,4 +36,6 @@ public interface CategoryMapper {
     void addCategory(Category category);
 
     void deleteById(Long id);
+
+    List<Category> selectByType(Integer type);
 }

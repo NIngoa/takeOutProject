@@ -3,7 +3,10 @@ package com.project.service;
 
 import com.project.dto.CategoryDTO;
 import com.project.dto.CategoryPageQueryDTO;
+import com.project.entity.Category;
 import com.project.result.PageResult;
+
+import java.util.List;
 
 public interface CategoryService {
 
@@ -16,4 +19,6 @@ public interface CategoryService {
     void updateCategory(CategoryDTO categoryDTO);
 
     void deleteCategory(Long id);
+
+    List<Category> selectByType(Integer type);
 }

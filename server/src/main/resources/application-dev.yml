@@ -1,4 +1,4 @@
-sky:
+project:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     # 数据库地址
@@ -11,3 +11,10 @@ sky:
     username: root
     # 数据库密码
     password: 1234
+  alioss:
+    endpoint: oss-cn-beijing.aliyuncs.com
+    access-key-id: LTAI5tPQafhubqh1RYkvwqTj
+    access-key-secret: YqnpkNZyih7j9V3oSQhCsz4Wgi6MXa
+    bucket-name: take-out-project1
+
+

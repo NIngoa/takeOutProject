@@ -4,7 +4,6 @@ import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.project.constant.MessageConstant;
 import com.project.constant.StatusConstant;
-import com.project.context.BaseContext;
 import com.project.dto.CategoryDTO;
 import com.project.dto.CategoryPageQueryDTO;
 import com.project.entity.Category;
@@ -18,7 +17,6 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.springframework.beans.BeanUtils.copyProperties;
@@ -123,6 +121,12 @@ public class CategoryServiceImpl implements CategoryService {
             throw new DeletionNotAllowedException(MessageConstant.CATEGORY_BE_RELATED_BY_SETMEAL);
         }
         categoryMapper.deleteById(id);
+    }
+
+    @Override
+    public List<Category> selectByType(Integer type) {
+        List<Category> category = categoryMapper.selectByType(type);
+        return category;
     }
 
 }

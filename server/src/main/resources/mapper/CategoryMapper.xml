@@ -47,5 +47,16 @@
                 and type=#{type}
             </if>
         </where>
+    order by sort asc,create_time desc
+    </select>
+
+
+    <select id="selectByType" resultType="com.project.entity.Category">
+        select * from category
+        where type=#{type}
+            <if test="status!=null">
+                and status=1
+            </if>
+    order by sort asc,create_time desc
     </select>
 </mapper>
