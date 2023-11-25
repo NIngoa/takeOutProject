@@ -3,9 +3,47 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.project.mapper.DishMapper">
     <insert id="insert" useGeneratedKeys="true" keyProperty="id">
-        insert into dish (name,category_id, price, image, description, status, create_time, create_user,update_user,update_time)
-        values (#{name},#{categoryId}, #{price}, #{image}, #{description}, #{status}, #{createTime}, #{createUser},#{updateUser},#{updateTime})
+        insert into dish (name, category_id, price, image, description, status, create_time, create_user, update_user,
+                          update_time)
+        values (#{name}, #{categoryId}, #{price}, #{image}, #{description}, #{status}, #{createTime}, #{createUser},
+                #{updateUser}, #{updateTime})
     </insert>
+    <update id="updateDishById" parameterType="dish">
+        update dish
+        <set>
+            <if test="name!=null and name!=''">
+                name=#{name},
+            </if>
+            <if test="categoryId!=null">
+                category_id=#{categoryId},
+            </if>
+            <if test="price!=null">
+                price=#{price},
+            </if>
+            <if test="image!=null">
+                image=#{image},
+            </if>
+            <if test="status!=null">
+                status=#{status},
+            </if>
+            <if test="description!=null">
+                description=#{description},
+            </if>
+            <if test="updateTime!=null">
+                update_time=#{updateTime},
+            </if>
+            <if test="updateUser!=null">
+                update_user=#{updateUser}
+            </if>
+        </set>
+        where id=#{id}
+    </update>
+    <delete id="deleteByIds">
+        delete from dish where id in
+        <foreach collection="ids" open="(" close=")" separator="," item="id">
+            #{id}
+        </foreach>
+    </delete>
     <select id="queryDishByPage" resultType="com.project.vo.DishVO">
         select d.*,c.name as categoryName from dish d left join category c on d.category_id= c.id
         <where>
@@ -20,5 +58,16 @@
             </if>
         </where>
         order by create_time desc
+    </select>
+    <select id="selectStatusByIds" resultType="java.lang.Integer">
+        select status from dish where id in
+        <foreach collection="ids" open="(" close=")" separator="," item="id">
+            #{id}
+        </foreach>
+    </select>
+    <select id="selectById" resultType="com.project.entity.Dish">
+        select *
+        from dish
+        where id = #{id}
     </select>
 </mapper>

@@ -9,4 +9,15 @@
             (#{flavor.dishId},#{flavor.name},#{flavor.value})
         </foreach>
     </insert>
+    <delete id="deleteByIds">
+        delete from dish_flavor where dish_id in
+        <foreach collection="ids" open="(" close=")" separator="," item="id">
+            #{id}
+        </foreach>
+    </delete>
+    <select id="selectByDishId" resultType="com.project.entity.DishFlavor">
+        select *
+        from dish_flavor
+        where dish_id = #{id}
+    </select>
 </mapper>
