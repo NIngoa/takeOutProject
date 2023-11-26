@@ -123,6 +123,12 @@ public class CategoryServiceImpl implements CategoryService {
         categoryMapper.deleteById(id);
     }
 
+    /**
+     * 根据分类类型查询分类
+     *
+     * @param type
+     * @return
+     */
     @Override
     public List<Category> selectByType(Integer type) {
         List<Category> category = categoryMapper.selectByType(type);

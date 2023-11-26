@@ -38,6 +38,21 @@
         </set>
         where id=#{id}
     </update>
+    <update id="updateStatus">
+        update dish
+        <set>
+            <if test="status!=null">
+                status=#{status},
+            </if>
+            <if test="updateTime!=null">
+                update_time=#{updateTime},
+            </if>
+            <if test="updateUser!=null">
+                update_user=#{updateUser}
+            </if>
+        </set>
+    where id = #{id}
+    </update>
     <delete id="deleteByIds">
         delete from dish where id in
         <foreach collection="ids" open="(" close=")" separator="," item="id">
@@ -69,5 +84,21 @@
         select *
         from dish
         where id = #{id}
+    </select>
+    <select id="selectDishByCategoryId" resultType="Dish" parameterType="Dish">
+        select *
+        from dish
+        <where>
+            <if test="name!=null and name!=''">
+                name like concat('%',#{name},'%')
+            </if>
+            <if test="categoryId!=null">
+                and category_id=#{categoryId}
+            </if>
+            <if test="status!=null">
+                and status=#{status}
+            </if>
+        </where>
+        order by create_time desc
     </select>
 </mapper>
