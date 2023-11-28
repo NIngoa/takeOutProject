@@ -1,7 +1,11 @@
 package com.project.service;
 
 import com.project.dto.SetmealDTO;
-import org.springframework.stereotype.Service;
+import com.project.dto.SetmealPageQueryDTO;
+import com.project.result.PageResult;
+import com.project.vo.SetmealVO;
+
+import java.util.List;
 
 public interface SetMealService {
     /**
@@ -9,4 +13,12 @@ public interface SetMealService {
      * @param setmealDTO
      */
     void addSetMeal(SetmealDTO setmealDTO);
+
+    PageResult querySetMealByPage(SetmealPageQueryDTO setmealPageQueryDTO);
+
+    void deleteSetMeal(List<Long> ids);
+
+    SetmealVO querySetMealById(Long id);
+
+    void updateSetMeal(SetmealDTO setmealDTO);
 }

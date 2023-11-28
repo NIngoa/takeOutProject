@@ -9,6 +9,30 @@
             (#{setmealDish.setmealId}, #{setmealDish.dishId}, #{setmealDish.name}, #{setmealDish.price}, #{setmealDish.copies})
         </foreach>
     </insert>
+    <update id="updateSetMealDishes">
+        update setmeal_dish
+        <set>
+            <if test="setmealId!=null">
+                setmeal_id = #{setmealId},
+            </if>
+            <if test="dishId!=null">
+                dish_id = #{dishId},
+            </if>
+            <if test="name!=null and name!=''">
+                name = #{name},
+            </if>
+            <if test="price!=null">
+                price = #{price},
+            </if>
+        </set>
+    </update>
+
+    <delete id="deleteSetMealDishes">
+        delete from setmeal_dish where setmeal_id in
+        <foreach collection="ids" item="id" separator="," open="(" close=")">
+            #{id}
+        </foreach>
+    </delete>
 
     <select id="selectSetMealidsByDishIds" resultType="java.lang.Long">
         select setmeal_id
@@ -17,5 +41,8 @@
         <foreach collection="ids" open="(" close=")" separator="," item="id">
             #{id}
         </foreach>
+    </select>
+    <select id="selectBySetMealId" resultType="setmealDish">
+        select * from setmeal_dish where setmeal_id=#{setmealId}
     </select>
 </mapper>
