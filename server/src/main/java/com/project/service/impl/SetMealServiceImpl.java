@@ -9,6 +9,7 @@ import com.project.dto.SetmealPageQueryDTO;
 import com.project.entity.Setmeal;
 import com.project.entity.SetmealDish;
 import com.project.exception.DeletionNotAllowedException;
+import com.project.mapper.DishMapper;
 import com.project.mapper.SetMealDishMapper;
 import com.project.mapper.SetMealMapper;
 import com.project.result.PageResult;
@@ -18,6 +19,8 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -27,6 +30,8 @@ public class SetMealServiceImpl implements SetMealService {
     private SetMealMapper setMealMapper;
     @Autowired
     private SetMealDishMapper setMealDishMapper;
+    @Autowired
+    private DishMapper dishMapper;
 
     /**
      * 添加套餐
@@ -136,4 +141,45 @@ public class SetMealServiceImpl implements SetMealService {
         }
         setMealDishMapper.addSetMealDishes(setmealDishes);
     }
+
+    /**
+     * 修改套餐状态
+     *
+     * @param status
+     * @param id
+     */
+    @Override
+    public void updateStatus(Integer status, Long id) {
+
+        List<SetmealDish> setmealDishes = setMealDishMapper.selectBySetMealId(id);
+
+        List<Long> dishIdList = new ArrayList<>();
+        //启售中的套餐餐品若有菜品停售，则不能启售
+        if (status.equals(StatusConstant.ENABLE)) {
+            //获取菜品id，并添加到集合中
+            for (SetmealDish setmealDish : setmealDishes) {
+                Long dishId = setmealDish.getDishId();
+                dishIdList.add(dishId);
+            }
+            //若菜品id集合为空，则不能启售
+            if (dishIdList == null || dishIdList.size() == 0){
+                throw new DeletionNotAllowedException(MessageConstant.SETMEAL_DISH_NOT_FOUND);
+            }
+            //状态集合中若包含状态为停售的菜品，则不能启售
+            List<Integer> statusList = dishMapper.selectStatusByIds(dishIdList);
+            if (statusList != null && statusList.size() > 0) {
+                if (statusList.contains(StatusConstant.DISABLE)) {
+                    throw new DeletionNotAllowedException(MessageConstant.SETMEAL_ENABLE_FAILED);
+                }
+            }
+        }
+        //修改套餐状态
+        Setmeal setmeal = Setmeal.builder()
+                .status(status)
+                .id(id)
+                .build();
+        setMealMapper.updateSetMeal(setmeal);
+    }
+
+
 }

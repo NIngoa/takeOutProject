@@ -21,4 +21,6 @@ public interface SetMealService {
     SetmealVO querySetMealById(Long id);
 
     void updateSetMeal(SetmealDTO setmealDTO);
+
+    void updateStatus(Integer status, Long id);
 }

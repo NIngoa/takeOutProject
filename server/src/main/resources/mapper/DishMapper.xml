@@ -8,6 +8,7 @@
         values (#{name}, #{categoryId}, #{price}, #{image}, #{description}, #{status}, #{createTime}, #{createUser},
                 #{updateUser}, #{updateTime})
     </insert>
+
     <update id="updateDishById" parameterType="dish">
         update dish
         <set>
@@ -38,6 +39,7 @@
         </set>
         where id=#{id}
     </update>
+
     <update id="updateStatus">
         update dish
         <set>
@@ -51,14 +53,16 @@
                 update_user=#{updateUser}
             </if>
         </set>
-    where id = #{id}
+        where id = #{id}
     </update>
+
     <delete id="deleteByIds">
         delete from dish where id in
         <foreach collection="ids" open="(" close=")" separator="," item="id">
             #{id}
         </foreach>
     </delete>
+
     <select id="queryDishByPage" resultType="com.project.vo.DishVO">
         select d.*,c.name as categoryName from dish d left join category c on d.category_id= c.id
         <where>
@@ -74,17 +78,20 @@
         </where>
         order by create_time desc
     </select>
+
     <select id="selectStatusByIds" resultType="java.lang.Integer">
         select status from dish where id in
         <foreach collection="ids" open="(" close=")" separator="," item="id">
             #{id}
         </foreach>
     </select>
+
     <select id="selectById" resultType="com.project.entity.Dish">
         select *
         from dish
         where id = #{id}
     </select>
+
     <select id="selectDishByCategoryId" resultType="Dish" parameterType="Dish">
         select *
         from dish

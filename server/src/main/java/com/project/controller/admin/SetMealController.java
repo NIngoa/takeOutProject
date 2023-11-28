@@ -91,4 +91,12 @@ public class SetMealController {
         setMealService.updateSetMeal(setmealDTO);
         return Result.success();
     }
+
+    @PostMapping("/status/{status}")
+    @ApiOperation(value = "修改套餐状态")
+    public Result setMealStatus(@PathVariable Integer status, Long id){
+        log.info("修改套餐状态:{}", status);
+        setMealService.updateStatus(status, id);
+        return Result.success();
+    }
 }
