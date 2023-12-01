@@ -4,4 +4,4 @@
 *.class
 *Test.java
 **/test/
-*
+**/mapper/application-dev.yml
