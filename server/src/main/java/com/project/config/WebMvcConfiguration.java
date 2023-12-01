@@ -48,7 +48,7 @@ public class WebMvcConfiguration extends WebMvcConfigurationSupport {
      * @return
      */
     @Bean
-    public Docket docket() {
+    public Docket docket1() {
         log.info("准备开始生成接口文档...");
         ApiInfo apiInfo = new ApiInfoBuilder()
                 .title("毕设项目接口文档")
@@ -56,14 +56,31 @@ public class WebMvcConfiguration extends WebMvcConfigurationSupport {
                 .description("毕设项目接口文档")
                 .build();
         Docket docket = new Docket(DocumentationType.SWAGGER_2)
+                .groupName("管理端接口")
                 .apiInfo(apiInfo)
                 .select()
-                .apis(RequestHandlerSelectors.basePackage("com.project.controller"))
+                .apis(RequestHandlerSelectors.basePackage("com.project.controller.admin"))
                 .paths(PathSelectors.any())
                 .build();
         return docket;
     }
-
+    @Bean
+    public Docket docket2() {
+        log.info("准备开始生成接口文档...");
+        ApiInfo apiInfo = new ApiInfoBuilder()
+                .title("毕设项目接口文档")
+                .version("2.0")
+                .description("毕设项目接口文档")
+                .build();
+        Docket docket = new Docket(DocumentationType.SWAGGER_2)
+                .groupName("用户端接口")
+                .apiInfo(apiInfo)
+                .select()
+                .apis(RequestHandlerSelectors.basePackage("com.project.controller.user"))
+                .paths(PathSelectors.any())
+                .build();
+        return docket;
+    }
     /**
      * 设置静态资源映射
      *
