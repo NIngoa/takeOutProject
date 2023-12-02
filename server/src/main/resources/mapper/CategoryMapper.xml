@@ -53,10 +53,12 @@
 
     <select id="selectByType" resultType="com.project.entity.Category">
         select * from category
-        where type=#{type}
-            <if test="status!=null">
-                and status=1
-            </if>
-    order by sort asc,create_time desc
+        <where>
+        <if test="type!=null">
+            type=#{type}
+        </if>
+            and status=1
+        </where>
+        order by sort asc,create_time desc
     </select>
 </mapper>

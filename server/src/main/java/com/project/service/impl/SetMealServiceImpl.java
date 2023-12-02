@@ -14,6 +14,7 @@ import com.project.mapper.SetMealDishMapper;
 import com.project.mapper.SetMealMapper;
 import com.project.result.PageResult;
 import com.project.service.SetMealService;
+import com.project.vo.DishItemVO;
 import com.project.vo.SetmealVO;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -181,5 +182,22 @@ public class SetMealServiceImpl implements SetMealService {
         setMealMapper.updateSetMeal(setmeal);
     }
 
+    /**
+     * 条件查询
+     * @param setmeal
+     * @return
+     */
+    public List<Setmeal> list(Setmeal setmeal) {
+        List<Setmeal> list = setMealMapper.list(setmeal);
+        return list;
+    }
 
+    /**
+     * 根据id查询菜品选项
+     * @param id
+     * @return
+     */
+    public List<DishItemVO> getDishItemById(Long id) {
+        return setMealMapper.getDishItemBySetmealId(id);
+    }
 }
