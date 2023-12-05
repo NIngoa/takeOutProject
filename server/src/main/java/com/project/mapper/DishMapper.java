@@ -14,24 +14,65 @@ import java.util.List;
 
 @Mapper
 public interface DishMapper {
+    /**
+     * 根据分类id查询菜品数量
+     * @param id
+     * @return
+     */
     @Select("select count(*) from dish where category_id=#{id}")
     Integer selectByCategoryId(Long id);
 
+    /**
+     * 新增菜品
+     * @param dish
+     */
     @AutoFill(value = OperationType.INSERT)
     void insert(Dish dish);
 
+    /**
+     * 分页查询菜品
+     * @param dishPageQueryDTO
+     * @return
+     */
     Page<DishVO> queryDishByPage(DishPageQueryDTO dishPageQueryDTO);
 
+    /**
+     * 根据菜品id查询菜品状态
+     * @param ids
+     * @return
+     */
     List<Integer> selectStatusByIds(List<Long> ids);
 
+    /**
+     * 批量删除菜品
+     * @param ids
+     */
     void deleteByIds(List<Long> ids);
 
+    /**
+     * 根据id查询菜品
+     * @param id
+     * @return
+     */
     Dish selectById(Long id);
 
+    /**
+     * 修改菜品
+     * @param dish
+     */
     @AutoFill(value = OperationType.UPDATE)
     void updateDishById(Dish dish);
 
+    /**
+     * 根据分类id查询菜品
+     * @param dish
+     * @return
+     */
     List<Dish> selectDishByCategoryId(Dish dish);
 
+    /**
+     * 修改菜品状态
+     * @param dish
+     */
     void updateStatus(Dish dish);
 }
