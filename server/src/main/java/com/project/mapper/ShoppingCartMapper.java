@@ -1,6 +1,7 @@
 package com.project.mapper;
 
 import com.project.entity.ShoppingCart;
+import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Update;
@@ -24,5 +25,7 @@ public interface ShoppingCartMapper {
             "VALUES (#{name},#{image},#{userId},#{dishId},#{setmealId},#{dishFlavor},#{number},#{amount},#{createTime})")
     void insert(ShoppingCart shoppingCart);
 
-    void delete(Long userId);
+    void deleteAll(Long userId);
+
+    void delete(ShoppingCart cart);
 }

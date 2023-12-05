@@ -63,9 +63,9 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
     @Override
     public List<ShoppingCart> listShoppingCart() {
         Long userId = BaseContext.getCurrentId();
-        ShoppingCart shoppingCart=new ShoppingCart();
+        ShoppingCart shoppingCart = new ShoppingCart();
         shoppingCart.setUserId(userId);
-        List<ShoppingCart>list=shoppingCartMapper.select(shoppingCart);
+        List<ShoppingCart> list = shoppingCartMapper.select(shoppingCart);
         return list;
     }
 
@@ -73,6 +73,26 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
     @Override
     public void deleteShoppingCart() {
         Long currentId = BaseContext.getCurrentId();
-        shoppingCartMapper.delete(currentId);
+        shoppingCartMapper.deleteAll(currentId);
+    }
+
+    @Override
+    public void subShoppingCart(ShoppingCartDTO shoppingCartDTO) {
+        // 1. 封装购物车实体类，拷贝dto属性值到实体类中
+        ShoppingCart shoppingCart = new ShoppingCart();
+        BeanUtils.copyProperties(shoppingCartDTO, shoppingCart);
+        // 2. 获取当前用户id,设置用户id
+        Long userId = BaseContext.getCurrentId();
+        shoppingCart.setUserId(userId);
+        List<ShoppingCart> list = shoppingCartMapper.select(shoppingCart);
+        ShoppingCart cart = list.get(0);
+        Integer number = cart.getNumber();
+        // 3. 判断购物车商品是否为1，如果大于1则更新数量，等于1，则删除商品
+        if (number > 1) {
+            cart.setNumber(--number);
+            shoppingCartMapper.updateNumById(cart);
+        } else {
+            shoppingCartMapper.delete(cart);
+        }
     }
 }
