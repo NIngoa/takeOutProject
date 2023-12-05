@@ -3,7 +3,6 @@ package com.project.mapper;
 import com.project.entity.ShoppingCart;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
 
 import java.util.List;
@@ -25,4 +24,5 @@ public interface ShoppingCartMapper {
             "VALUES (#{name},#{image},#{userId},#{dishId},#{setmealId},#{dishFlavor},#{number},#{amount},#{createTime})")
     void insert(ShoppingCart shoppingCart);
 
+    void delete(Long userId);
 }
