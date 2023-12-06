@@ -11,10 +11,25 @@ project:
     username: root
     # 数据库密码
     password: 1234
+
+  redis:
+    host: localhost
+    port: 6379
+    database: 0
+
   alioss:
     endpoint: oss-cn-beijing.aliyuncs.com
     access-key-id: LTAI5tPQafhubqh1RYkvwqTj
     access-key-secret: YqnpkNZyih7j9V3oSQhCsz4Wgi6MXa
     bucket-name: take-out-project1
+
+  jwt:
+    user-secret-key: 1b8fafba3489fee971addcc051c919bf
+    user-ttl: 72000000
+    user-token-name: authentication
+
+  wechat:
+    appid: wx9fd8b3aea1fec7c8
+    secret: 1b8fafba3489fee971addcc051c919bf
 
 
