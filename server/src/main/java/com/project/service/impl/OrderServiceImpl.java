@@ -1,24 +1,23 @@
 package com.project.service.impl;
 
+import com.alibaba.fastjson.JSONObject;
 import com.project.constant.MessageConstant;
 import com.project.context.BaseContext;
+import com.project.dto.OrdersPaymentDTO;
 import com.project.dto.OrdersSubmitDTO;
-import com.project.entity.AddressBook;
-import com.project.entity.OrderDetail;
-import com.project.entity.Orders;
-import com.project.entity.ShoppingCart;
+import com.project.entity.*;
 import com.project.exception.OrderBusinessException;
-import com.project.mapper.AddressBookMapper;
-import com.project.mapper.OrderDetailMapper;
-import com.project.mapper.OrderMapper;
-import com.project.mapper.ShoppingCartMapper;
+import com.project.mapper.*;
 import com.project.service.OrderService;
+import com.project.utils.WeChatPayUtil;
+import com.project.vo.OrderPaymentVO;
 import com.project.vo.OrderSubmitVO;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -33,28 +32,33 @@ public class OrderServiceImpl implements OrderService {
     private ShoppingCartMapper shoppingCartMapper;
     @Autowired
     private AddressBookMapper addressBookMapper;
+    @Autowired
+    private UserMapper userMapper;
+    @Autowired
+    private WeChatPayUtil weChatPayUtil;
+
     @Transactional
     @Override
     public OrderSubmitVO submitOrder(OrdersSubmitDTO ordersSubmitDTO) {
         //检验购物车数据是否为空
-        ShoppingCart shoppingCart=new ShoppingCart();
+        ShoppingCart shoppingCart = new ShoppingCart();
         //获取当前用户id
         Long userId = BaseContext.getCurrentId();
         shoppingCart.setUserId(userId);
         //获取购物车数据
         List<ShoppingCart> shoppingCartList = shoppingCartMapper.select(shoppingCart);
-        if (shoppingCartList==null&&shoppingCartList.size()==0){
+        if (shoppingCartList == null && shoppingCartList.size() == 0) {
             throw new OrderBusinessException(MessageConstant.SHOPPING_CART_IS_NULL);
         }
         //检验地址簿数据是否为空
         AddressBook addressBook = addressBookMapper.getById(ordersSubmitDTO.getAddressBookId());
-        if (addressBook==null){
+        if (addressBook == null) {
             throw new OrderBusinessException(MessageConstant.ADDRESS_BOOK_IS_NULL);
         }
 
         //向订单表中插入数据
         Orders orders = new Orders();
-        BeanUtils.copyProperties(ordersSubmitDTO,orders);
+        BeanUtils.copyProperties(ordersSubmitDTO, orders);
         orders.setOrderTime(LocalDateTime.now());
         orders.setNumber(String.valueOf(System.currentTimeMillis()));
         orders.setAddress(addressBook.getDetail());
@@ -66,10 +70,10 @@ public class OrderServiceImpl implements OrderService {
         orderMapper.insert(orders);
         //向订单详情表中插入数据
 
-        List<OrderDetail> orderDetailList =new ArrayList<>();
+        List<OrderDetail> orderDetailList = new ArrayList<>();
         for (ShoppingCart cart : shoppingCartList) {
-            OrderDetail orderDetail=new OrderDetail();
-            BeanUtils.copyProperties(cart,orderDetail);
+            OrderDetail orderDetail = new OrderDetail();
+            BeanUtils.copyProperties(cart, orderDetail);
             orderDetail.setOrderId(orders.getId());
             orderDetailList.add(orderDetail);
         }
@@ -84,5 +88,59 @@ public class OrderServiceImpl implements OrderService {
                 .orderTime(orders.getOrderTime())
                 .build();
         return orderSubmitVO;
+    }
+
+    /**
+     * 订单支付
+     *
+     * @param ordersPaymentDTO
+     * @return
+     */
+    public OrderPaymentVO payment(OrdersPaymentDTO ordersPaymentDTO) throws Exception {
+        // 当前登录用户id
+        Long userId = BaseContext.getCurrentId();
+        User user = userMapper.getById(userId);
+
+        //调用微信支付接口，生成预支付交易单
+//        JSONObject jsonObject = weChatPayUtil.pay(
+//                ordersPaymentDTO.getOrderNumber(), //商户订单号
+//                new BigDecimal(0.01), //支付金额，单位 元
+//                "订单", //商品描述
+//                user.getOpenid() //微信用户的openid
+//        );
+//
+//        if (jsonObject.getString("code") != null && jsonObject.getString("code").equals("ORDERPAID")) {
+//            throw new OrderBusinessException("该订单已支付");
+//        }
+
+        //跳过微信支付
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("code", "ORDERPAID");
+        OrderPaymentVO vo = jsonObject.toJavaObject(OrderPaymentVO.class);
+        vo.setPackageStr(jsonObject.getString("package"));
+        //支付成功
+        paySuccess(ordersPaymentDTO.getOrderNumber());
+        return vo;
+    }
+
+    /**
+     * 支付成功，修改订单状态
+     *
+     * @param outTradeNo
+     */
+    public void paySuccess(String outTradeNo) {
+
+        // 根据订单号查询订单
+        Orders ordersDB = orderMapper.getByNumber(outTradeNo);
+
+        // 根据订单id更新订单的状态、支付方式、支付状态、结账时间
+        Orders orders = Orders.builder()
+                .id(ordersDB.getId())
+                .status(Orders.TO_BE_CONFIRMED)
+                .payStatus(Orders.PAID)
+                .checkoutTime(LocalDateTime.now())
+                .build();
+
+        orderMapper.update(orders);
     }
 }
