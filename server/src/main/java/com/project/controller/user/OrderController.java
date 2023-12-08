@@ -2,6 +2,7 @@ package com.project.controller.user;
 
 import com.project.dto.OrdersPaymentDTO;
 import com.project.dto.OrdersSubmitDTO;
+import com.project.result.PageResult;
 import com.project.result.Result;
 import com.project.service.OrderService;
 import com.project.vo.OrderPaymentVO;
@@ -47,5 +48,21 @@ public class OrderController {
         OrderPaymentVO orderPaymentVO = orderService.payment(ordersPaymentDTO);
         log.info("生成预支付交易单：{}", orderPaymentVO);
         return Result.success(orderPaymentVO);
+    }
+
+    /**
+     * 查询用户历史订单
+     *
+     * @param page
+     * @param pageSize
+     * @param status
+     * @return
+     */
+    @GetMapping("/historyOrders")
+    @ApiOperation(value = "查询用户历史订单")
+    public Result<PageResult> historyOrders(int page, int pageSize, Integer status) {
+        log.info("查询用户历史订单：page={},pageSize={},status={}", page, pageSize, status);
+       PageResult pageResult=orderService.historyOrders(page,pageSize,status);
+        return Result.success(pageResult);
     }
 }

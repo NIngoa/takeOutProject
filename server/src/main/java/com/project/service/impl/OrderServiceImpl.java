@@ -1,23 +1,29 @@
 package com.project.service.impl;
 
 import com.alibaba.fastjson.JSONObject;
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
 import com.project.constant.MessageConstant;
 import com.project.context.BaseContext;
+import com.project.dto.OrdersDTO;
+import com.project.dto.OrdersPageQueryDTO;
 import com.project.dto.OrdersPaymentDTO;
 import com.project.dto.OrdersSubmitDTO;
 import com.project.entity.*;
 import com.project.exception.OrderBusinessException;
 import com.project.mapper.*;
+import com.project.result.PageResult;
 import com.project.service.OrderService;
 import com.project.utils.WeChatPayUtil;
 import com.project.vo.OrderPaymentVO;
 import com.project.vo.OrderSubmitVO;
+import com.project.vo.OrderVO;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.math.BigDecimal;
+import java.beans.Beans;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -142,5 +148,39 @@ public class OrderServiceImpl implements OrderService {
                 .build();
 
         orderMapper.update(orders);
+    }
+
+    /**
+     * 查询用户历史订单
+     *
+     * @return
+     */
+    @Override
+    public PageResult historyOrders(int pageNum, int pageSize, Integer status) {
+
+        //分页
+        PageHelper.startPage(pageNum, pageSize);
+
+        //设置查询条件
+        OrdersPageQueryDTO ordersPageQueryDTO = new OrdersPageQueryDTO();
+        Long userId = BaseContext.getCurrentId();
+        ordersPageQueryDTO.setUserId(userId);
+        ordersPageQueryDTO.setStatus(status);
+        Page<Orders> page = orderMapper.pageQuery(ordersPageQueryDTO);
+
+        List<OrderVO> list = new ArrayList<>();
+        //封装VO对象
+        if (page != null && page.size() > 0) {
+            for (Orders orders : page) {
+                Long orderId = orders.getId();
+                OrderVO orderVO = new OrderVO();
+                BeanUtils.copyProperties(orders, orderVO);
+                List<OrderDetail> orderDetailList = orderDetailMapper.selectByOrderId(orderId);
+                orderVO.setOrderDetailList(orderDetailList);
+                list.add(orderVO);
+            }
+        }
+        return new PageResult(page.getTotal(),list);
+
     }
 }

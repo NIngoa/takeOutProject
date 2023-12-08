@@ -1,8 +1,8 @@
 package com.project.mapper;
 
-import com.project.dto.OrdersSubmitDTO;
+import com.github.pagehelper.Page;
+import com.project.dto.OrdersPageQueryDTO;
 import com.project.entity.Orders;
-import com.project.vo.OrderSubmitVO;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 
@@ -10,8 +10,10 @@ import org.apache.ibatis.annotations.Select;
 public interface OrderMapper {
 
     void insert(Orders orders);
+
     /**
      * 根据订单号查询订单
+     *
      * @param orderNumber
      */
     @Select("select * from orders where number = #{orderNumber}")
@@ -19,7 +21,11 @@ public interface OrderMapper {
 
     /**
      * 修改订单信息
+     *
      * @param orders
      */
     void update(Orders orders);
+
+
+    Page<Orders> pageQuery(OrdersPageQueryDTO ordersPageQueryDTO);
 }

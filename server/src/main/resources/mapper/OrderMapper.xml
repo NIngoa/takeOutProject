@@ -43,4 +43,29 @@
         </set>
         where id = #{id}
     </update>
+    <select id="pageQuery" resultType="com.project.entity.Orders">
+        select * from orders
+        <where>
+            <if test="number!= null and number!=''">
+                number = #{number}
+            </if>
+            <if test="beginTime!= null and beginTime!=''">
+                order_time &gt;= #{beginTime}
+            </if>
+            <if test="endTime!= null and endTime!=''">
+                order_time &lt;= #{endTime}
+            </if>
+            <if test="userId!= null and userId!=''">
+                user_id = #{userId}
+            </if>
+            <if test="phone!= null and phone!=''">
+                phone = #{phone}
+            </if>
+            <if test="status!= null and status!=''">
+                status = #{status}
+            </if>
+        </where>
+        order by order_time desc
+    </select>
+
 </mapper>

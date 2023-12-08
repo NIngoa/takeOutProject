@@ -2,6 +2,7 @@ package com.project.service;
 
 import com.project.dto.OrdersPaymentDTO;
 import com.project.dto.OrdersSubmitDTO;
+import com.project.result.PageResult;
 import com.project.vo.OrderPaymentVO;
 import com.project.vo.OrderSubmitVO;
 
@@ -25,4 +26,7 @@ public interface OrderService {
      * @param outTradeNo
      */
     void paySuccess(String outTradeNo);
+
+    PageResult historyOrders(int page, int pageSize, Integer status);
+
 }
