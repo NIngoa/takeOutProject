@@ -1,10 +1,13 @@
 package com.project.service;
 
+import com.github.pagehelper.Page;
+import com.project.dto.OrdersPageQueryDTO;
 import com.project.dto.OrdersPaymentDTO;
 import com.project.dto.OrdersSubmitDTO;
 import com.project.result.PageResult;
 import com.project.vo.OrderPaymentVO;
 import com.project.vo.OrderSubmitVO;
+import com.project.vo.OrderVO;
 
 public interface OrderService {
     /**
@@ -29,4 +32,11 @@ public interface OrderService {
 
     PageResult historyOrders(int page, int pageSize, Integer status);
 
+    OrderVO orderDetail(Long id);
+
+    void cancelOrder(Long id);
+
+    void repetition(Long id);
+
+    PageResult conditionSearch(OrdersPageQueryDTO ordersPageQueryDTO);
 }

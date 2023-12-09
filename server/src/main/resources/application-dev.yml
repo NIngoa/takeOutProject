@@ -25,7 +25,7 @@ project:
 
   jwt:
     user-secret-key: 1b8fafba3489fee971addcc051c919bf
-    user-ttl: 72000000
+    user-ttl: 720000000
     user-token-name: authentication
 
   wechat:

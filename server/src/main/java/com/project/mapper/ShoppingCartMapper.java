@@ -28,4 +28,6 @@ public interface ShoppingCartMapper {
     void deleteAll(Long userId);
 
     void delete(ShoppingCart cart);
+
+    void insertBatch(List<ShoppingCart> shoppingCartList);
 }
