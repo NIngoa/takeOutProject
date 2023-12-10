@@ -9,7 +9,7 @@ import java.util.List;
 @Mapper
 public interface OrderDetailMapper {
     void insertList(List<OrderDetail> orderDetailList);
-@Select("select * from order_detail where id=#{orderId}")
+@Select("select * from order_detail where order_id=#{orderId}")
     List<OrderDetail> selectByOrderId(Long orderId);
 }
 

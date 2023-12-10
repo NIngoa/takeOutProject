@@ -1,11 +1,9 @@
 package com.project.service;
 
-import com.github.pagehelper.Page;
-import com.project.dto.OrdersPageQueryDTO;
-import com.project.dto.OrdersPaymentDTO;
-import com.project.dto.OrdersSubmitDTO;
+import com.project.dto.*;
 import com.project.result.PageResult;
 import com.project.vo.OrderPaymentVO;
+import com.project.vo.OrderStatisticsVO;
 import com.project.vo.OrderSubmitVO;
 import com.project.vo.OrderVO;
 
@@ -39,4 +37,12 @@ public interface OrderService {
     void repetition(Long id);
 
     PageResult conditionSearch(OrdersPageQueryDTO ordersPageQueryDTO);
+
+    OrderStatisticsVO statistics();
+
+    void takeOrders(OrdersConfirmDTO ordersConfirmDTO);
+
+    void rejection(OrdersRejectionDTO ordersRejectionDTO);
+
+    void adminCancelOrder(OrdersCancelDTO ordersCancelDTO);
 }

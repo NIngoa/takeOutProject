@@ -31,4 +31,5 @@ public interface OrderMapper {
 
     @Select("select * from orders where id=#{id}")
     Orders selectByOrderId(Long id);
+    Integer getStatistics(Integer status);
 }

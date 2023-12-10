@@ -4,7 +4,7 @@
 <mapper namespace="com.project.mapper.EmployeeMapper">
 
     <select id="selectByPage" resultType="com.project.entity.Employee">
-        select * from take_out_project.employee
+        select * from employee
         <where>
             <if test="name!=null and name!=''">
                 name like concat('%',#{name},'%')
