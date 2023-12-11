@@ -17,7 +17,6 @@ import com.project.vo.OrderSubmitVO;
 import com.project.vo.OrderVO;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
@@ -42,6 +41,12 @@ public class OrderServiceImpl implements OrderService {
 //    @Autowired
 //    private WeChatPayUtil weChatPayUtil;
 
+    /**
+     * 用户下单
+     *
+     * @param ordersSubmitDTO
+     * @return
+     */
     @Transactional
     @Override
     public OrderSubmitVO submitOrder(OrdersSubmitDTO ordersSubmitDTO) {
@@ -360,7 +365,7 @@ public class OrderServiceImpl implements OrderService {
                 .cancelTime(LocalDateTime.now())
                 .build();
         // 支付状态为1（已支付）则修改支付状态为2（已退款）
-        if (orders.getPayStatus().equals(Orders.PAID)){
+        if (orders.getPayStatus().equals(Orders.PAID)) {
 /*            //用户已支付，需要退款
             String refund = weChatPayUtil.refund(
                     ordersDB.getNumber(),
@@ -370,9 +375,14 @@ public class OrderServiceImpl implements OrderService {
             log.info("申请退款：{}", refund);*/
             statusOrder.setPayStatus(Orders.REFUND);
         }
-            orderMapper.update(statusOrder);
+        orderMapper.update(statusOrder);
     }
 
+    /**
+     * 管理员取消订单
+     *
+     * @param ordersCancelDTO
+     */
     @Override
     public void adminCancelOrder(OrdersCancelDTO ordersCancelDTO) {
         // 根据id查询订单
@@ -390,7 +400,7 @@ public class OrderServiceImpl implements OrderService {
                 .cancelTime(LocalDateTime.now())
                 .build();
         // 支付状态为1（已支付）则修改支付状态为2（已退款）
-        if (orders.getPayStatus().equals(Orders.PAID)){
+        if (orders.getPayStatus().equals(Orders.PAID)) {
 /*            //用户已支付，需要退款
             String refund = weChatPayUtil.refund(
                     orders.getNumber(),
@@ -401,5 +411,43 @@ public class OrderServiceImpl implements OrderService {
             statusOrder.setPayStatus(Orders.REFUND);
         }
         orderMapper.update(statusOrder);
+    }
+
+    /**
+     * 订单派送
+     *
+     * @param id
+     */
+    @Override
+    public void delivery(Long id) {
+        // 根据id查询订单
+        Orders order = orderMapper.selectByOrderId(id);
+        // 校验订单是否存在，并且状态为3
+        if (order == null || !order.getStatus().equals(Orders.CONFIRMED)) {
+            throw new OrderBusinessException(MessageConstant.ORDER_STATUS_ERROR);
+        }
+        Orders orders = new Orders();
+        orders.setId(id);
+        // 更新订单状态,状态转为派送中
+        orders.setStatus(Orders.DELIVERY_IN_PROGRESS);
+        orderMapper.update(orders);
+    }
+
+    /**
+     * 订单完成
+     *
+     * @param id
+     */
+    @Override
+    public void complete(Long id) {
+        Orders orders = orderMapper.selectByOrderId(id);
+        if (orders == null ||!orders.getStatus().equals(Orders.DELIVERY_IN_PROGRESS)) {
+            throw new OrderBusinessException(MessageConstant.ORDER_STATUS_ERROR);
+        }
+            Orders order = new Orders();
+            order.setId(id);
+            order.setStatus(Orders.COMPLETED);
+            order.setDeliveryTime(LocalDateTime.now());
+            orderMapper.update(order);
     }
 }
