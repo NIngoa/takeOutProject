@@ -43,6 +43,18 @@
         </set>
         where id = #{id}
     </update>
+    <update id="updateList">
+        update orders
+        <set>
+            <if test="status!= null">
+                status = #{status},
+            </if>
+        </set>
+        where id in
+        <foreach collection="idList" item="orderId" open="(" separator="," close=")">
+            #{orderId}
+        </foreach>
+    </update>
     <select id="pageQuery" resultType="com.project.entity.Orders">
         select * from orders
         <where>
