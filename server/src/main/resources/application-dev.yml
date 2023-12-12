@@ -31,5 +31,10 @@ project:
   wechat:
     appid: wx9fd8b3aea1fec7c8
     secret: 1b8fafba3489fee971addcc051c919bf
+  shop:
+    address: 北京市海淀区上地十街10号
+
+  baidu:
+    ak: jGjKr70XXPeY16eBgHMHnGRD4mnWMVih
 
 

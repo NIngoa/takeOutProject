@@ -55,4 +55,9 @@ project:
   wechat:
     appid: ${project.wechat.appid}
     appsecret: ${project.wechat.appsecret}
-
+    #商城地址
+  shop:
+    address: ${project.shop.address}
+    #百度ak
+  baidu:
+    ak: ${project.baidu.ak}
