@@ -18,6 +18,7 @@ import com.project.vo.OrderPaymentVO;
 import com.project.vo.OrderStatisticsVO;
 import com.project.vo.OrderSubmitVO;
 import com.project.vo.OrderVO;
+import com.project.websocket.WebSocketServer;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -48,6 +49,8 @@ public class OrderServiceImpl implements OrderService {
     private AddressBookMapper addressBookMapper;
     @Autowired
     private UserMapper userMapper;
+    @Autowired
+    private WebSocketServer webSocketServer;
 //    @Autowired
 //    private WeChatPayUtil weChatPayUtil;
 
@@ -163,6 +166,14 @@ public class OrderServiceImpl implements OrderService {
                 .build();
 
         orderMapper.update(orders);
+
+        //通过websocket向客户端浏览器推送消息 type orderId content
+        Map map=new HashMap();
+        map.put("type",1);//1表示来单提醒 2表示客户催单
+        map.put("orderId",ordersDB.getId());
+        map.put("content","订单号:"+outTradeNo);
+        String jsonString = JSONObject.toJSONString(map);
+        webSocketServer.sendToAllClient(jsonString);
     }
 
     /**

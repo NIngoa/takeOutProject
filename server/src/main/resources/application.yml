@@ -55,6 +55,7 @@ project:
   wechat:
     appid: ${project.wechat.appid}
     appsecret: ${project.wechat.appsecret}
+    notify-url: ${project.wechat.notify-url}
     #商城地址
   shop:
     address: ${project.shop.address}

@@ -95,6 +95,12 @@ public class OrderController {
         return Result.success();
     }
 
+    /**
+     * 再来一单
+     *
+     * @param id
+     * @return
+     */
     @PostMapping("/repetition/{id}")
     @ApiOperation(value = "再来一单")
     public Result repetition(@PathVariable Long id) {
@@ -102,4 +108,5 @@ public class OrderController {
         orderService.repetition(id);
         return Result.success();
     }
+
 }
