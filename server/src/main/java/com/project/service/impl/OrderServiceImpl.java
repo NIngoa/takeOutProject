@@ -472,6 +472,24 @@ public class OrderServiceImpl implements OrderService {
             order.setDeliveryTime(LocalDateTime.now());
             orderMapper.update(order);
     }
+
+    @Override
+    public void reminder(Long id) {
+        Orders orders = orderMapper.selectByOrderId(id);
+        //检验订单是否存在
+        if (orders==null){
+            throw new OrderBusinessException(MessageConstant.ORDER_NOT_FOUND);
+        }
+        Map map=new HashMap();
+        map.put("type",2);
+        map.put("orderId",id);
+        map.put("content","订单号:"+orders.getNumber());
+        //转为json数据
+        String jsonString = JSONObject.toJSONString(map);
+        //将消息发送给客户端
+        webSocketServer.sendToAllClient(jsonString);
+    }
+
     /**
      * 检查客户的收货地址是否超出配送范围
      * @param address
