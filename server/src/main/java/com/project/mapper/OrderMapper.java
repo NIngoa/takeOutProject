@@ -8,6 +8,7 @@ import org.apache.ibatis.annotations.Select;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
 @Mapper
 public interface OrderMapper {
@@ -54,4 +55,6 @@ public interface OrderMapper {
      * @param status
      */
     void updateList(List<Long> idList, Integer status);
+
+    Double turnoverStatistics(Map map);
 }
