@@ -36,6 +36,12 @@ public interface OrderMapper {
     @Select("select * from orders where id=#{id}")
     Orders selectByOrderId(Long id);
 
+    /**
+     * 查询类别订单统计
+     *
+     * @param status
+     * @return
+     */
     Integer getStatistics(Integer status);
 
     /**
@@ -57,4 +63,6 @@ public interface OrderMapper {
     void updateList(List<Long> idList, Integer status);
 
     Double turnoverStatistics(Map map);
+
+    Integer getOrderStatistics(Map map);
 }

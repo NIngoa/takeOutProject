@@ -8,4 +8,16 @@
         insert into user(openid, name, phone, sex, id_number, avatar, create_time)
         VALUES (#{openid}, #{name}, #{phone}, #{sex}, #{idNumber}, #{avatar}, #{createTime})
     </insert>
+    <select id="getStatistics" resultType="java.lang.Integer">
+        select count(*)
+        from user
+        <where>
+            <if test="beginDate!= null">
+                create_time &gt; #{beginDate}
+            </if>
+            <if test="endDate!= null">
+                and create_time &lt; #{endDate}
+            </if>
+        </where>
+    </select>
 </mapper>
