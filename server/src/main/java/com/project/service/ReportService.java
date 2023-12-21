@@ -5,6 +5,7 @@ import com.project.vo.SalesTop10ReportVO;
 import com.project.vo.TurnoverReportVO;
 import com.project.vo.UserReportVO;
 
+import javax.servlet.http.HttpServletResponse;
 import java.time.LocalDate;
 
 public interface ReportService {
@@ -15,4 +16,6 @@ public interface ReportService {
     OrderReportVO orderStatistics(LocalDate begin, LocalDate end) throws Exception;
 
     SalesTop10ReportVO top10(LocalDate begin, LocalDate end);
+
+    void export(HttpServletResponse response);
 }

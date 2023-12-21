@@ -6,15 +6,21 @@ import com.project.mapper.OrderDetailMapper;
 import com.project.mapper.OrderMapper;
 import com.project.mapper.UserMapper;
 import com.project.service.ReportService;
-import com.project.vo.OrderReportVO;
-import com.project.vo.SalesTop10ReportVO;
-import com.project.vo.TurnoverReportVO;
-import com.project.vo.UserReportVO;
+import com.project.service.WorkspaceService;
+import com.project.vo.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.poi.xssf.usermodel.XSSFRow;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletResponse;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -32,7 +38,7 @@ public class ReportServiceImpl implements ReportService {
     @Autowired
     private UserMapper userMapper;
     @Autowired
-    private OrderDetailMapper orderDetailMapper;
+    private WorkspaceService workspaceService;
 
     /**
      * 统计指定时间区间内的营业额
@@ -200,6 +206,68 @@ public class ReportServiceImpl implements ReportService {
                 .nameList(name)
                 .numberList(number)
                 .build();
+    }
+
+    /**
+     * 导出数据报表
+     *
+     * @param response
+     */
+    @Override
+    public void export(HttpServletResponse response) {
+        LocalDate begin = LocalDate.now().minusDays(30);
+        LocalDate end = LocalDate.now().minusDays(1);
+        BusinessDataVO businessData = workspaceService.getBusinessData(LocalDateTime.of(begin, LocalTime.MIN), LocalDateTime.of(end, LocalTime.MAX));
+        //通过反射获取模板
+        InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream("template/运营数据报表模板.xlsx");
+        try {
+            // 读取模板
+            XSSFWorkbook excel = new XSSFWorkbook(inputStream);
+            // 获取sheet1
+            XSSFSheet sheet1 = excel.getSheet("Sheet1");
+            //获得第二行
+            XSSFRow row2 = sheet1.getRow(1);
+            row2.getCell(1).setCellValue(begin+"至"+end);
+            //获得第四行
+            XSSFRow row4 = sheet1.getRow(3);
+            row4.getCell(2).setCellValue(businessData.getTurnover());
+            row4.getCell(4).setCellValue(businessData.getOrderCompletionRate());
+            row4.getCell(6).setCellValue(businessData.getNewUsers());
+            //获得第五行
+            XSSFRow row5 = sheet1.getRow(4);
+            row5.getCell(2).setCellValue(businessData.getValidOrderCount());
+            row5.getCell(4).setCellValue(businessData.getUnitPrice());
+
+            for (int i = 0; i < 30; i++) {
+                LocalDate date = begin.plusDays(i);
+                //查询某一行
+                XSSFRow row = sheet1.getRow(7+i);
+                row.getCell(1).setCellValue(date.toString());
+                //查询当天数据
+                BusinessDataVO data = workspaceService.getBusinessData(LocalDateTime.of(date, LocalTime.MIN), LocalDateTime.of(date, LocalTime.MAX));
+                row.getCell(2).setCellValue(data.getTurnover());
+                row.getCell(3).setCellValue(data.getValidOrderCount());
+                row.getCell(4).setCellValue(data.getOrderCompletionRate());
+                row.getCell(5).setCellValue(data.getUnitPrice());
+                row.getCell(6).setCellValue(data.getNewUsers());
+            }
+
+
+            //通过输出流将excel写入到浏览器
+            ServletOutputStream outputStream = response.getOutputStream();
+            excel.write(outputStream);
+            //关闭流
+            outputStream.close();
+            excel.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                inputStream.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     /**
