@@ -1,6 +1,7 @@
 package com.project.mapper;
 
 import com.github.pagehelper.Page;
+import com.project.dto.GoodsSalesDTO;
 import com.project.dto.OrdersPageQueryDTO;
 import com.project.entity.Orders;
 import org.apache.ibatis.annotations.Mapper;
@@ -62,7 +63,21 @@ public interface OrderMapper {
      */
     void updateList(List<Long> idList, Integer status);
 
+    /**
+     * 营业额统计
+     *
+     * @param map
+     * @return
+     */
     Double turnoverStatistics(Map map);
 
+    /**
+     * 订单统计
+     *
+     * @param map
+     * @return
+     */
     Integer getOrderStatistics(Map map);
+
+    List<GoodsSalesDTO> getSalesTop10(LocalDateTime beginTime, LocalDateTime endTime);
 }

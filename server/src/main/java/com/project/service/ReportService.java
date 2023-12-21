@@ -1,6 +1,7 @@
 package com.project.service;
 
 import com.project.vo.OrderReportVO;
+import com.project.vo.SalesTop10ReportVO;
 import com.project.vo.TurnoverReportVO;
 import com.project.vo.UserReportVO;
 
@@ -12,4 +13,6 @@ public interface ReportService {
     UserReportVO userStatistics(LocalDate begin, LocalDate end) throws Exception;
 
     OrderReportVO orderStatistics(LocalDate begin, LocalDate end) throws Exception;
+
+    SalesTop10ReportVO top10(LocalDate begin, LocalDate end);
 }

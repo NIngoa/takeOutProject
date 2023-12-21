@@ -1,10 +1,13 @@
 package com.project.service.impl;
 
+import com.project.dto.GoodsSalesDTO;
 import com.project.entity.Orders;
+import com.project.mapper.OrderDetailMapper;
 import com.project.mapper.OrderMapper;
 import com.project.mapper.UserMapper;
 import com.project.service.ReportService;
 import com.project.vo.OrderReportVO;
+import com.project.vo.SalesTop10ReportVO;
 import com.project.vo.TurnoverReportVO;
 import com.project.vo.UserReportVO;
 import lombok.extern.slf4j.Slf4j;
@@ -28,6 +31,8 @@ public class ReportServiceImpl implements ReportService {
     private OrderMapper orderMapper;
     @Autowired
     private UserMapper userMapper;
+    @Autowired
+    private OrderDetailMapper orderDetailMapper;
 
     /**
      * 统计指定时间区间内的营业额
@@ -113,6 +118,13 @@ public class ReportServiceImpl implements ReportService {
         return userReportVO;
     }
 
+    /**
+     * 统计指定时间区间内的订单数和有效订单数及订单完成率
+     *
+     * @param begin
+     * @param end
+     * @return
+     */
     @Override
     public OrderReportVO orderStatistics(LocalDate begin, LocalDate end) throws Exception {
         //获取日期列表
@@ -154,7 +166,50 @@ public class ReportServiceImpl implements ReportService {
         return orderReportVO;
     }
 
+    /**
+     * 统计指定时间区间内的前10商品的销量
+     *
+     * @param begin
+     * @param end
+     * @return
+     */
+    @Override
+    public SalesTop10ReportVO top10(LocalDate begin, LocalDate end) {
+        LocalDateTime beginTime = LocalDateTime.of(begin, LocalTime.MIN);
+        LocalDateTime endTime = LocalDateTime.of(end, LocalTime.MAX);
+        //获取商品销量前10的商品和销量集合
+        List<GoodsSalesDTO> salesTop10 = orderMapper.getSalesTop10(beginTime, endTime);
 
+        List<String> nameList = new ArrayList<>();
+        List<Integer> numberList = new ArrayList<>();
+        //获取商品名称和数量分别添加到名称集合和数量集合中
+        if (salesTop10 != null) {
+            for (GoodsSalesDTO goodsSalesDTO : salesTop10) {
+                String name = goodsSalesDTO.getName();
+                Integer number = goodsSalesDTO.getNumber();
+                number = number == null ? 0 : number;
+                nameList.add(name);
+                numberList.add(number);
+            }
+        }
+        //拼接商品名称和数量
+        String name = StringUtils.join(nameList, ",");
+        String number = StringUtils.join(numberList, ",");
+        //构建返回对象
+        return SalesTop10ReportVO.builder()
+                .nameList(name)
+                .numberList(number)
+                .build();
+    }
+
+    /**
+     * 获取订单总数
+     *
+     * @param begin
+     * @param end
+     * @param status
+     * @return
+     */
     private Integer getOrders(LocalDateTime begin, LocalDateTime end, Integer status) {
         Map map = new HashMap();
         map.put("begin", begin);
