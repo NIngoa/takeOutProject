@@ -3,6 +3,7 @@ package com.project.service;
 import com.project.dto.EmployeeDTO;
 import com.project.dto.EmployeeLoginDTO;
 import com.project.dto.EmployeePageQueryDTO;
+import com.project.dto.PasswordEditDTO;
 import com.project.entity.Employee;
 import com.project.result.PageResult;
 
@@ -24,5 +25,7 @@ public interface EmployeeService {
     Employee getById(Long id);
 
     void updateEmployee(EmployeeDTO employeeDTO);
+
+    void editPasswordEmployee(PasswordEditDTO passwordEditDTO);
 
 }

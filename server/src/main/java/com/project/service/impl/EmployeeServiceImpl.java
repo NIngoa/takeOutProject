@@ -9,6 +9,7 @@ import com.project.context.BaseContext;
 import com.project.dto.EmployeeDTO;
 import com.project.dto.EmployeeLoginDTO;
 import com.project.dto.EmployeePageQueryDTO;
+import com.project.dto.PasswordEditDTO;
 import com.project.entity.Employee;
 import com.project.exception.AccountLockedException;
 import com.project.exception.AccountNotFoundException;
@@ -114,6 +115,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     /**
      * 修改员工状态
+     *
      * @param status
      * @param id
      */
@@ -130,27 +132,51 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     /**
      * 根据id查询员工信息
+     *
      * @param id
      * @return
      */
     @Override
     public Employee getById(Long id) {
-        Employee employee=employeeMapper.selectById(id);
+        Employee employee = employeeMapper.selectById(id);
         return employee;
     }
 
     /**
      * 修改员工信息
+     *
      * @param employeeDTO
      */
     @Override
     public void updateEmployee(EmployeeDTO employeeDTO) {
-        Employee employee=new Employee();
-        BeanUtils.copyProperties(employeeDTO,employee);
+        Employee employee = new Employee();
+        BeanUtils.copyProperties(employeeDTO, employee);
 //        employee.setUpdateTime(LocalDateTime.now());
 //        employee.setUpdateUser(BaseContext.getCurrentId());
         employeeMapper.update(employee);
     }
 
+    /**
+     * 修改员工密码
+     *
+     * @param passwordEditDTO
+     */
+    @Override
+    public void editPasswordEmployee(PasswordEditDTO passwordEditDTO) {
+        passwordEditDTO.setEmpId(BaseContext.getCurrentId());
+        Long empId = passwordEditDTO.getEmpId();
+        Employee employee = employeeMapper.selectById(empId);
+        //1、判断旧密码是否正确
+        String nowPassword = employee.getPassword();
+        String oldPassword = DigestUtils.md5DigestAsHex(passwordEditDTO.getOldPassword().getBytes());
+        if (oldPassword.equals(nowPassword)) {
+            //2、修改密码
+            String newPassword = passwordEditDTO.getNewPassword();
+            employeeMapper.update(Employee.builder()
+                    .password(DigestUtils.md5DigestAsHex(newPassword.getBytes()))
+                    .id(empId)
+                    .build());
+        }
 
+    }
 }
